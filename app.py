@@ -1,13 +1,18 @@
 from flask import Flask
-from flask import Flask, render_template
+from flask import request, redirect
+from flask import render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/greeting')
 def home():
-    return render_template('index.html')
+    if request.method == 'GET':
+        return render_template('index.html')
+    elif request.method == 'POST':
+        return redirect("/innastrona")
 
-@app.route('/innastrona')
+
+@app.route('/innastrona', methods=['GET'])
 def innastrona():
     return 'Witam na innej stronie'
 
@@ -19,6 +24,31 @@ def klient(numer):
 def dodaj(numer1,numer2):
     wynik = int(numer1) + int(numer2)
     return f'Wynik: {wynik}'
+
+@app.route('/message', methods=['POST'])
+def message():
+    print(request.form)
+    return redirect("/greeting")
+
+@app.route("/warehouse_ugly")
+def warehouse_ugly():
+    items = ["screwdriver", "hammer", "saw"]
+    html = "<ul>"
+    for item in items:
+        html = html + f"<li>{item}</li>"
+    html += "</ul>"
+    return html
+
+@app.route("/warehouse")
+def warehouse():
+    items = ["screwdriver", "hammer", "saw"]
+    return render_template("warehouse.html", items=items, errors = "Errors")
+
+@app.route("/warehouse2")
+def warehouse2():
+    items = ["screwdriver", "hammer", "saw"]
+    errors = ["hammer is broken!"]
+    return render_template("warehouse2.html", items=items, errors=errors)
 
 
 if __name__ == '__main__':
